@@ -1,1 +1,2 @@
-newpage.js
+grid.js
+customAction.js
