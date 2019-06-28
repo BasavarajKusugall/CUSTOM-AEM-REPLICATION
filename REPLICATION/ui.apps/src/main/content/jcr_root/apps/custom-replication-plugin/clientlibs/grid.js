@@ -1,4 +1,6 @@
-var CUSTOM_ACTIONS = "/apps/custom-replication-plugin/actions";
+var CUSTOM_ACTIONS = "/apps/custom-replication-plugin/actions.infinity.json";
+var REPLICATION_SERVICE_URL = "/apps/custom-replication-plugin/actions/replicate.replicate.json";
+var REPLICATION_SERVICE_STATUS = "/apps/custom-replication-plugin/actions/status.active.json";
 var AGENT_GRID_PANEL = "custom-replication-panel";
 var CUSTOM_REPLICATION_BUTTON_ID = "custom-replication-service";
 var MISC_ADMIN_WINDOW = "cq-miscadmin-grid";
@@ -11,16 +13,16 @@ replicationService = {
    msg: CQ.I18n.getMessage(msg),
    buttons: buttons,
    icon: icon,
+   width:1000,
    animEl: 'elId',
    fn: handler
   });
  },
- ajaxCall: function(path,response) {
-  var url = path + '.infinity.json'
-
+ ajaxCall: function(path,method,data) {
   return  $.ajax({
-                  type: "GET",
-                  url: url,
+                  type: method || "GET",
+                  url: path,
+                  data:data,
                   dataType:"JSON",
                   async: false,
                   success: function (result) {
@@ -68,6 +70,10 @@ replicationService = {
      type: 'string'
     },
     {
+     name: 'jcr:path',
+     type: 'string'
+    },
+    {
      name: 'jcr:title',
      type: 'string'
     },
@@ -108,10 +114,18 @@ replicationService = {
    }
   });
   var cmModel = new CQ.Ext.grid.ColumnModel({
-   columns: [{
-     header: CQ.I18n.getMessage("Agent Name"),
+   columns: [
+   {
+        header: CQ.I18n.getMessage("Agent ID"),
+        dataIndex: 'jcr:path',
+        width: 400,
+        renderer : replicationService.getAgentId,
+
+   },
+   {
+     header: CQ.I18n.getMessage("Agent Title"),
      dataIndex: 'jcr:title',
-     width: 500
+     width: 300
     },
     {
      header: CQ.I18n.getMessage("Host"),
@@ -127,22 +141,23 @@ replicationService = {
       icon: '/apps/custom-replication-plugin/clientlibs/icons/upload16x16.png',
       tooltip: 'Replicate',
       handler: function(grid, rowIndex, colIndex) {
-       var canReplicate = replicationService.ajaxCall("/apps/custom-replication-plugin/actions") || true;
+       var canReplicate = replicationService.ajaxCall("/apps/custom-replication-plugin/actions");
        if (canReplicate) {
-        var adminGrid = CQ.Ext.getCmp(MISC_ADMIN_WINDOW);
-        if (adminGrid) {
-         var pathSelected = adminGrid.getSelectionModel().getSelections();
+       var selctedData = replicationService.getSelections();
+        if (selctedData &&  selctedData.pathSelected) {
+         var pathSelected = selctedData.pathSelected;
          if (pathSelected && pathSelected.length > 0) {
-          var agentGrid = CQ.Ext.getCmp(AGENT_GRID_PANEL);
-          var agentSelected = agentGrid.getSelectionModel().getSelections();
+          var agentSelected = selctedData.agentSelected;
           var msg;
           if (pathSelected.length == 1 && agentSelected && agentSelected.length > 0) {
-           msg = "Item selected (" + pathSelected[0].id + ") and target replication agent(" + agentSelected[0].json["jcr:title"] + ")"
+            var agentId = replicationService.getAgentId(agentSelected[0].json["jcr:path"],'','');
+            var agentDetatils = agentSelected[0].json["jcr:title"] +"("+agentId+")";
+           msg = "Replicate (" + (pathSelected[0].json["title"] ? pathSelected[0].json["title"] : pathSelected[0].json["path"]) + ") to replication "+agentDetatils;
           } else if (pathSelected.length > 1 && agentSelected && agentSelected.length > 0) {
-           msg = "Multiple path selected and target replication agent(" + agentSelected[0].json["jcr:title"] + ")"
+           msg = "Multiple path selected and target replication "+agentDetatils
           }
           if (msg) {
-           replicationService.getMsgBox('Do you want to Replicate ?', msg, CQ.Ext.Msg.YESNOCANCEL, CQ.Ext.MessageBox.QUESTION, replicationService.confirmDialogActions);
+           replicationService.getMsgBox('Do you want to Replicate ?', msg, CQ.Ext.Msg.YESNO, CQ.Ext.MessageBox.QUESTION, replicationService.confirmDialogActions);
           } else {
            replicationService.getMsgBox("Warning", "Replication agent not selected!", CQ.Ext.Msg.OK, CQ.Ext.MessageBox.WARNING, '');
           }
@@ -189,6 +204,20 @@ replicationService = {
    autoScroll: true,
    frame: false,
    features: [filters],
+   listeners: {
+     cellclick: function (grd, rowIndex, colIndex, e)
+     {
+
+        if(colIndex==0)//action takes place only  when col=
+           {
+             var rec = grd.getStore().getAt(rowIndex);
+             var agentId = replicationService.getAgentId(rec.get('jcr:path'));
+             var response = replicationService.ajaxCall(REPLICATION_SERVICE_STATUS,"GET",{'agentId':agentId});
+             replicationService.getMsgBox(agentId+ " ==> Queue Status" ,response.responseText || "Queue is idle",CQ.Ext.Msg.OK, CQ.Ext.MessageBox.INFO, '')
+
+           }
+     }
+   },
    bbar: new CQ.Ext.PagingToolbar({
     pageSize: 25,
     store: dataStore,
@@ -203,21 +232,50 @@ replicationService = {
 
   return editorGridPanel;
  },
+ getSelections : function(){
+  var adminGrid = CQ.Ext.getCmp(MISC_ADMIN_WINDOW);
+  var agentGrid = CQ.Ext.getCmp(AGENT_GRID_PANEL);
+  var agentSelected = agentGrid.getSelectionModel().getSelections() || [];
+  var pathSelected = adminGrid.getSelectionModel().getSelections() || [];
+
+    var data = {
+        pathSelected : pathSelected,
+        agentSelected : agentSelected
+    };
+
+    return data;
+ },
  confirmDialogActions: function(btn) {
   if (btn === "yes") {
-   CQ.Ext.Ajax.request({
-    url: 'custom/replication/service.json',
-    params: {
-     pathSelected: "",
-     agentSelected:""
-    },
-    success: function(response, opts) {}
-   })
+  var selctedData = replicationService.getSelections();
+  var pathArr = [];
+        for(var i=0 ; i < selctedData.pathSelected.length ;i++){
+           pathArr[i] = selctedData.pathSelected[i].json["path"];
+         }
+
+       var data ={
+        pathSelected : pathArr,
+        agentSelected: selctedData.agentSelected[0].json["jcr:path"],
+        agentId: replicationService.getAgentId(selctedData.agentSelected[0].json["jcr:path"])
+       }
+
+       CQ.Ext.Ajax.request({
+        url: REPLICATION_SERVICE_URL,
+        params: data,
+        success: function(response, opts) {}
+       })
 
 
   } else {
 
   }
  },
+ getAgentId : function(val, meta, record){
+         if(val) {
+              var pathArr = val.split("/");
+              return pathArr[pathArr.length-2];
+         }
+         return val || "";
+     }
 
 },

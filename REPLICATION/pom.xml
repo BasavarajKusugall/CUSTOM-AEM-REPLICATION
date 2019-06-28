@@ -550,6 +550,12 @@
                 <version>1.4</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.6</version>
+                <groupId>org.apache.commons</groupId>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
