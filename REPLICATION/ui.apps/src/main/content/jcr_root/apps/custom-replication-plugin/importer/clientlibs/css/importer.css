@@ -1,0 +1,169 @@
+.coral-Form--aligned .process-dialog-field {
+    float: left;
+    margin: 0.6rem 0 .9375rem 0;
+}
+
+.coral--dark .coral-Dialog-wrapper, .coral--dark .coral-Dialog-header, .coral--dark coral-Dialog-content {
+    background-color: #333 !important
+}
+
+coral-Dialog-content .coral-Form-field {
+    width: 55%;
+    text-align: left;
+}
+
+coral-Dialog-content .coral-Form-fieldlabel {
+    min-width:10em
+}
+
+.coral-Form--aligned .coral-Form-fieldwrapper .coral-Form-fieldwrapper {
+    margin: 0;
+    clear: none;
+}
+
+.coral-Form--aligned .coral-Form-fieldwrapper--singleline {
+    margin-left: 8.65em !important;
+}
+
+.coral-Form--aligned .coral-Form-fieldwrapper--singleline label.coral-Checkbox {
+    width: 20%;
+    min-width: 140px;
+}
+.coral-Form--aligned .coral-Form-fieldwrapper {
+    margin-left: 8.65em !important;
+}
+.granite-actionbar-left {
+    margin-left: 2em;
+}
+
+.granite-actionbar-right {
+    margin-right: 2em;
+}
+
+#mcp-main-menu {
+    max-width:175px; 
+    position:absolute; 
+    left:0; 
+    overflow-x: hidden;
+}
+
+.coral-Shell {
+    background-color: #484848;
+}
+.coral-PanelStack.coral-Well, .coral-Panel.coral-Well {
+    margin-top: 0;
+    background-color: #484848;
+    border-color: #484848;
+}
+.coral--dark .coral-Button {
+    border-color: #3c3c3c;
+    background-color: #333;
+    color: #fff;
+}
+button.coral--dark.coral-Button.is-required:hover {
+    background-color: #484848;
+    color: #fff;
+    border-color: #3c3c3c;
+}
+.coral--dark {
+    background-color: #4b4b4b;
+    color: #fff;
+    border-color: #3c3c3c;
+}
+.coral--dark .coral-Textfield {
+    color: #fff;
+    background-color: #464646;
+    border-color: #3c3c3c;
+}
+.eaton.coral-Step-label {
+    color: #fff !important;
+}
+.eaton.coral-Step.is-selected .coral-Step-label {
+    color: #326ec8;
+}
+button.coral-Form--aligned.coral-Button.coral-Button--primary {
+    margin-left: 8.5rem;
+}
+form.coral-Form.coral-Form--aligned.u-columnLarge {
+    border-radius: 0.25rem;
+    border: 1px solid #fff;
+    margin-top: 50px;
+    width: 70%;
+    margin-left: 17%;
+    padding: 7px 7px;
+}
+coral-shell-header.coral--dark.coral-Shell-header {
+    background-color: #333;
+}
+.coral-Form-fieldset-legend {
+    display: block;
+    margin: .5rem 0 .625rem 0;
+    font-family: adobe-clean,Helvetica,Arial,sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 1.125rem;
+    line-height: 1.25rem;
+    color:#fff;
+}
+.coral-Form-fieldset:first-of-type .coral-Form-fieldset-legend {
+    margin-top: 1.5625rem;
+}
+.eaton.coral-Icon--infoCircle:before {
+    content: "\f255";
+    color: #fff;
+}
+.coral-Button:not(:disabled):not(.is-disabled):focus, .coral-Button:not(:disabled):not(.is-disabled).is-focused{
+    background-color: #464646;
+}
+.importer-heading {
+    border-bottom: 1px solid #fff;
+    margin-bottom: 10px;
+}
+#failure-logs-console{
+    background-color: rgb(240, 240, 240);
+    overflow-y: scroll;
+    padding: 0 25px;
+    border: 2px solid red;
+    max-height: 50%;
+}
+#sucess-logs-console{
+    background-color: rgb(240, 240, 240);
+    overflow-y: scroll;
+    padding: 0 25px;
+    border: 2px solid green;
+    max-height: 70%;
+}
+#total-message{
+    background-color: rgb(240, 240, 240);
+    text-align: center;
+    margin-left: 31px;
+    width: 102%;
+}
+.head-message{
+    border-bottom: 2px solid #000;
+}
+span a {
+    margin: 10px;
+}
+coral-accordion.coral3-Accordion.coral3-Accordion--large {
+    margin: 20px 31px;
+    width: 100%;
+    padding: 0px 0px 20px 20px;
+}
+.coral3-Accordion--large .coral3-Accordion-header {
+    height: 3.875rem;
+    line-height: 1rem;
+}
+.logs {
+    padding: 0px 110px;
+}
+coral-accordion.coral3-Accordion.coral3-Accordion--large {
+    margin-bottom: 20px;
+}
+strong{
+    color: red;
+}
+coral-wait#wait {
+    display:none;
+    margin: 10% 45%;
+}

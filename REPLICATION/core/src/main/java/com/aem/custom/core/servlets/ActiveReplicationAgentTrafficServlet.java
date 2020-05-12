@@ -39,8 +39,7 @@ import java.util.Map;
                    Constants.SERVICE_DESCRIPTION + "=Replication Agent Listing Servlet",
                    "sling.servlet.methods=" + HttpConstants.METHOD_GET,
                    "sling.servlet.resourceTypes="+ "custom/replication/status",
-                   "sling.servlet.selectors ="+ "active",
-                   "sling.servlet.extensions=" + "json"
+                   "sling.servlet.paths="+ "/bin/custom/replication/status",
            })
 public class ActiveReplicationAgentTrafficServlet extends SlingSafeMethodsServlet {
 
